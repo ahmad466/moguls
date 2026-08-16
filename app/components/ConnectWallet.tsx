@@ -1,11 +1,38 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { useAccount, useConnect, useDisconnect } from 'wagmi';
 
 export function ConnectWallet() {
+  const [mounted, setMounted] = useState(false);
   const { address, isConnected } = useAccount();
   const { connect, connectors, isPending } = useConnect();
   const { disconnect } = useDisconnect();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  function handleConnect() {
+    const hasInjected = typeof window !== 'undefined' && (window as any).ethereum;
+    const connector = hasInjected
+      ? connectors.find((c) => c.type === 'injected')
+      : connectors.find((c) => c.id === 'walletConnect');
+    if (connector) connect({ connector });
+  }
+
+  // Belum ter-mount di browser (masih render server) -> tampilkan tombol
+  // netral biar sama persis antara server & client, hindari hydration error.
+  if (!mounted) {
+    return (
+      <button
+        disabled
+        className="font-pixel text-[10px] bg-exbr-amber text-black px-3 md:px-4 py-3 border-4 border-black shadow-[3px_3px_0_#000] opacity-50 whitespace-nowrap flex-shrink-0"
+      >
+        CONNECT
+      </button>
+    );
+  }
 
   if (isConnected) {
     return (
@@ -27,7 +54,7 @@ export function ConnectWallet() {
 
   return (
     <button
-      onClick={() => connect({ connector: connectors[0] })}
+      onClick={handleConnect}
       disabled={isPending}
       className="font-pixel text-[10px] bg-exbr-amber text-black px-3 md:px-4 py-3 border-4 border-black shadow-[3px_3px_0_#000] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0_#000] transition-all disabled:opacity-50 whitespace-nowrap flex-shrink-0"
     >

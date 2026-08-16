@@ -66,7 +66,7 @@ export default function Home() {
             WHITELIST APPLICATIONS OPEN
           </div>
           <h1 className="font-pixel text-2xl md:text-4xl leading-relaxed mb-6">
-            EVERY MOGUL<br />
+            EVERY MOGULS<br />
             STARTS ON THE <span className="text-exbr-amber">FLOOR</span>
             <span
               className="inline-block w-3 md:w-5 h-6 md:h-9 bg-exbr-amber ml-2 align-middle"
@@ -163,7 +163,7 @@ export default function Home() {
             <div className="font-pixel text-[10px] text-exbr-amber mb-3">Q1</div>
             <h3 className="font-pixel text-xs mb-3 leading-relaxed">DOORS OPEN</h3>
             <p className="font-mono text-xs text-white/60 leading-relaxed">
-              Whitelist applications go live. First 500 verified applicants
+              Whitelist applications go live. First 1000 verified applicants
               lock in early-bird pricing.
             </p>
           </div>
@@ -230,7 +230,7 @@ export default function Home() {
             <p className="font-mono text-xs text-white/60 mt-4 leading-relaxed">
               Stake your Mogul, and it earns $MOGULS for you while it sits
               in your wallet — out of a fixed 1,000,000,000 token supply.
-              Full mechanics announced closer to Q4.
+              Full mechanics announced.
             </p>
           </details>
 
