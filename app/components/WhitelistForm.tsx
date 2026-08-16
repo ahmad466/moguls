@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 
-const TWITTER_URL = 'https://twitter.com/GANTI_USERNAME_KAMU';
-const PINNED_TWEET_URL = 'https://twitter.com/GANTI_USERNAME_KAMU/status/GANTI_ID_TWEET';
+const TWITTER_URL = 'https://twitter.com/moguls_nfts';
+const PINNED_TWEET_URL = 'https://twitter.com/moguls_nfts/status/';
 
 export function WhitelistForm() {
   const [wallet, setWallet] = useState('');
