@@ -123,7 +123,7 @@ export function WhitelistForm() {
             <label className="flex items-center gap-3 font-mono text-xs cursor-pointer">
               <input type="checkbox" checked={taskRetweet} onChange={(e) => setTaskRetweet(e.target.checked)} className="w-5 h-5 accent-exbr-amber" />
               <a href={PINNED_TWEET_URL} target="_blank" rel="noopener noreferrer" className="underline hover:text-exbr-amber" onClick={() => setTimeout(() => setTaskRetweet(true), 300)}>
-                3. Retweet pinned post ↗
+                3. Comment and Retweet pinned post ↗
               </a>
             </label>
           </div>
@@ -141,8 +141,8 @@ export function WhitelistForm() {
           </div>
 
           <div>
-            <label className="font-pixel text-[10px] block mb-2 text-exbr-amber">X / TWITTER HANDLE *</label>
-            <input type="text" value={twitter} onChange={(e) => setTwitter(e.target.value)} placeholder="@yourhandle" required
+            <label className="font-pixel text-[10px] block mb-2 text-exbr-amber">X / COMMENT LINK*</label>
+            <input type="text" value={twitter} onChange={(e) => setTwitter(e.target.value)} placeholder="Link" required
               className="w-full bg-black border-4 border-white/20 focus:border-exbr-amber outline-none px-3 py-3 text-white font-mono text-sm" />
             <small className="text-white/40 font-mono text-[10px] block mt-1">Dipakai untuk cross-check manual task sosial di atas.</small>
           </div>
