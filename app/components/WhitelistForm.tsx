@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 
 const TWITTER_URL = 'https://twitter.com/moguls_nfts';
-const PINNED_TWEET_URL = 'https://twitter.com/moguls_nfts/status/';
+const PINNED_TWEET_URL = 'https://x.com/moguls_nfts/status/2089120745683333367?s=46';
 const TOTAL_SPOTS = 1000;
 
 export function WhitelistForm() {
