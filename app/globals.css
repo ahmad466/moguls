@@ -1,0 +1,71 @@
+@import "tailwindcss";
+
+:root {
+  --background: #0b0c0a;
+  --foreground: #ededed;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  --font-pixel: var(--font-pixel);
+
+  --color-exbr-bg: #0b0c0a;
+  --color-exbr-panel: #131409;
+  --color-exbr-line: #2b2c22;
+  --color-exbr-amber: #eb802f;
+  --color-exbr-violet: #8b47de;
+  --color-exbr-green: #3ed17a;
+  --color-exbr-red: #ff5c5c;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+@keyframes scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-100%); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-14px); }
+}
+
+@keyframes blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.15; }
+  50% { opacity: 0.9; }
+}
+
+.scanlines::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.035) 0px,
+    rgba(255, 255, 255, 0.035) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+}
+
+.pixel-star {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: #eb802f;
+  animation: twinkle 2.4s steps(2) infinite;
+}
