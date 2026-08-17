@@ -4,11 +4,11 @@ import { useState } from 'react';
 import { ConnectWallet } from './ConnectWallet';
 
 const LINKS = [
-  { href: '/#about', label: 'ABOUT' },
-  { href: '/#roster', label: 'ROSTER' },
+  { href: '/floor#about', label: 'ABOUT' },
+  { href: '/floor#roster', label: 'ROSTER' },
   { href: '/staking', label: 'STAKING' },
-  { href: '/#roadmap', label: 'ROADMAP' },
-  { href: '/#faq', label: 'FAQ' },
+  { href: '/floor#roadmap', label: 'ROADMAP' },
+  { href: '/floor#faq', label: 'FAQ' },
 ];
 
 export function Nav() {
@@ -17,9 +17,9 @@ export function Nav() {
   return (
     <nav className="border-b-4 border-exbr-line relative">
       <div className="flex items-center justify-between flex-wrap px-4 md:px-10 py-4 md:py-7 gap-3">
-        <div className="font-pixel text-lg md:text-2xl tracking-wider">
+        <a href="/" className="font-pixel text-lg md:text-2xl tracking-wider">
           MOG<span className="text-exbr-amber">ULS</span>
-        </div>
+        </a>
 
         <div className="hidden md:flex items-center gap-8 font-pixel text-xs text-white/70">
           {LINKS.map((link) => (
@@ -31,14 +31,13 @@ export function Nav() {
 
         <div className="flex items-center gap-2 md:gap-3 flex-shrink-0">
           <a
-            href="/#whitelist"
+            href="/floor#whitelist"
             className="font-pixel text-[10px] bg-transparent text-exbr-amber px-3 md:px-4 py-3 border-4 border-exbr-amber hover:bg-exbr-amber hover:text-black transition-colors whitespace-nowrap flex-shrink-0"
           >
             APPLY WL
           </a>
           <ConnectWallet />
 
-          {/* Hamburger — mobile only */}
           <button
             onClick={() => setOpen(!open)}
             aria-label="Toggle menu"
@@ -49,7 +48,6 @@ export function Nav() {
         </div>
       </div>
 
-      {/* Mobile dropdown menu */}
       {open && (
         <div className="md:hidden border-t-4 border-exbr-line bg-exbr-panel flex flex-col">
           {LINKS.map((link) => (

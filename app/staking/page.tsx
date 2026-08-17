@@ -72,7 +72,7 @@ export default function StakingPage() {
                 for the whitelist if you don't have one yet.
               </p>
               <a
-                href="/#whitelist"
+                href="/floor#whitelist"
                 className="mt-6 font-pixel text-[10px] bg-exbr-amber text-black px-4 py-3 border-4 border-black shadow-[3px_3px_0_#000] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0_#000] transition-all"
               >
                 APPLY FOR WHITELIST
