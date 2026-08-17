@@ -20,7 +20,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "MOGULS",
+  title: "MOGULS NFT",
   description: "4,444 pixel-art moguls. Apply for whitelist access.",
 };
 
