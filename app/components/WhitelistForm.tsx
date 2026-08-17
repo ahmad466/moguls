@@ -144,7 +144,7 @@ export function WhitelistForm() {
             <label className="font-pixel text-[10px] block mb-2 text-exbr-amber">X / COMMENT LINK*</label>
             <input type="text" value={twitter} onChange={(e) => setTwitter(e.target.value)} placeholder="Link" required
               className="w-full bg-black border-4 border-white/20 focus:border-exbr-amber outline-none px-3 py-3 text-white font-mono text-sm" />
-            <small className="text-white/40 font-mono text-[10px] block mt-1">Dipakai untuk cross-check manual task sosial di atas.</small>
+            <small className="text-white/40 font-mono text-[10px] block mt-1"></small>
           </div>
 
           <button type="submit" disabled={status === 'loading'}
