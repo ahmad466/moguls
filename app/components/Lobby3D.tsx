@@ -41,7 +41,6 @@ export function Lobby3D() {
     );
     camera.position.set(0, EYE_HEIGHT, 6);
 
-    // yaw = 0 -> kamera menghadap -z, yaitu ke arah loket (loket ada di z negatif).
     let yaw = 0;
     let pitch = 0;
 
@@ -50,51 +49,60 @@ export function Lobby3D() {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     container.appendChild(renderer.domElement);
 
-    scene.add(new THREE.AmbientLight(0xffffff, 0.55));
-    const dirLight = new THREE.DirectionalLight(0xffcf8a, 0.9);
+    scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+    const dirLight = new THREE.DirectionalLight(0xffcf8a, 0.85);
     dirLight.position.set(3, 6, 4);
     scene.add(dirLight);
     const amberGlow = new THREE.PointLight(0xeb802f, 1.2, 15);
     amberGlow.position.set(0, 3, -3);
     scene.add(amberGlow);
 
-    const floorMat = new THREE.MeshStandardMaterial({ color: 0x14150f, roughness: 0.9 });
+    const floorMat = new THREE.MeshStandardMaterial({ color: 0xb8bcc2, roughness: 0.35, metalness: 0.55 });
     const floor = new THREE.Mesh(new THREE.PlaneGeometry(ROOM_W, ROOM_D), floorMat);
     floor.rotation.x = -Math.PI / 2;
     scene.add(floor);
 
-    const grid = new THREE.GridHelper(ROOM_W, 20, 0xeb802f, 0x2b2c22);
-    (grid.material as THREE.Material).opacity = 0.25;
+    const grid = new THREE.GridHelper(ROOM_W, 20, 0xeb802f, 0x6b6f75);
+    (grid.material as THREE.Material).opacity = 0.35;
     (grid.material as THREE.Material).transparent = true;
     scene.add(grid);
 
-    const wallMat = new THREE.MeshStandardMaterial({ color: 0x131409, roughness: 1 });
+    const sideWallMat = new THREE.MeshStandardMaterial({ color: 0x5c3a21, roughness: 0.85 });
+    const backWallMat = new THREE.MeshStandardMaterial({ color: 0xeb802f, roughness: 0.7 });
+    const ceilingMat = new THREE.MeshStandardMaterial({ color: 0x3a3d42, roughness: 0.4, metalness: 0.5 });
 
-    const backWall = new THREE.Mesh(new THREE.PlaneGeometry(ROOM_W, ROOM_H), wallMat);
+    const backWall = new THREE.Mesh(new THREE.PlaneGeometry(ROOM_W, ROOM_H), backWallMat);
     backWall.position.set(0, ROOM_H / 2, -ROOM_D / 2);
     scene.add(backWall);
 
-    const leftWall = new THREE.Mesh(new THREE.PlaneGeometry(ROOM_D, ROOM_H), wallMat);
+    const leftWall = new THREE.Mesh(new THREE.PlaneGeometry(ROOM_D, ROOM_H), sideWallMat);
     leftWall.position.set(-ROOM_W / 2, ROOM_H / 2, 0);
     leftWall.rotation.y = Math.PI / 2;
     scene.add(leftWall);
 
-    const rightWall = new THREE.Mesh(new THREE.PlaneGeometry(ROOM_D, ROOM_H), wallMat);
+    const rightWall = new THREE.Mesh(new THREE.PlaneGeometry(ROOM_D, ROOM_H), sideWallMat);
     rightWall.position.set(ROOM_W / 2, ROOM_H / 2, 0);
     rightWall.rotation.y = -Math.PI / 2;
     scene.add(rightWall);
 
-    function makeSignTexture(text: string, opts?: { bg?: string; fg?: string }) {
+    const ceiling = new THREE.Mesh(new THREE.PlaneGeometry(ROOM_W, ROOM_D), ceilingMat);
+    ceiling.position.set(0, ROOM_H, 0);
+    ceiling.rotation.x = Math.PI / 2;
+    scene.add(ceiling);
+
+    function makeSignTexture(text: string, opts?: { bg?: string; fg?: string; border?: string }) {
       const canvas = document.createElement('canvas');
       canvas.width = 512;
       canvas.height = 128;
       const ctx = canvas.getContext('2d')!;
-      const bg = opts?.bg ?? '#eb802f';
+      const bg = opts?.bg ?? '#000000';
       const fg = opts?.fg ?? '#eb802f';
+      const border = opts?.border ?? '#eb802f';
       ctx.fillStyle = bg;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = '#000000';
-      ctx.fillRect(6, 6, canvas.width - 12, canvas.height - 12);
+      ctx.strokeStyle = border;
+      ctx.lineWidth = 6;
+      ctx.strokeRect(3, 3, canvas.width - 6, canvas.height - 6);
       ctx.fillStyle = fg;
       ctx.font = 'bold 44px monospace';
       ctx.textAlign = 'center';
@@ -117,7 +125,7 @@ export function Lobby3D() {
       ctx.fillStyle = '#ffffff';
       ctx.font = 'bold 30px monospace';
       ctx.textAlign = 'center';
-      ctx.fillText('APPLY WL', canvas.width / 2, 46);
+      ctx.fillText('OPENSEA', canvas.width / 2, 46);
       ctx.font = 'bold 22px monospace';
       ctx.fillStyle = '#eb802f';
       ctx.fillText('WHITELIST PROGRESS', canvas.width / 2, 92);
@@ -136,30 +144,122 @@ export function Lobby3D() {
       return { tex, canvas, ctx };
     }
 
-    // Dinding kiri: Robinhood Chain
-    const rhSignMat = new THREE.MeshBasicMaterial({
-      map: makeSignTexture('ROBINHOOD', { bg: '#00c805', fg: '#000000' }),
-    });
-    const rhSign = new THREE.Mesh(new THREE.PlaneGeometry(3, 0.8), rhSignMat);
-    rhSign.position.set(-ROOM_W / 2 + 0.05, 3, -1);
-    rhSign.rotation.y = Math.PI / 2;
-    scene.add(rhSign);
+    function makeHalo(width: number, height: number, color: number) {
+      const haloMat = new THREE.MeshBasicMaterial({
+        color,
+        transparent: true,
+        opacity: 0.35,
+        blending: THREE.AdditiveBlending,
+        side: THREE.DoubleSide,
+      });
+      const halo = new THREE.Mesh(new THREE.PlaneGeometry(width * 1.35, height * 1.35), haloMat);
+      return halo;
+    }
+
+    const loader = new THREE.TextureLoader();
+    const glowLights: THREE.PointLight[] = [];
+    const halos: THREE.Mesh[] = [];
+
+    // ---------- Dinding kiri: Robinhood ----------
+    const rhGroup = new THREE.Group();
+    rhGroup.position.set(-ROOM_W / 2 + 0.05, 3, -1);
+    rhGroup.rotation.y = Math.PI / 2;
+
+    const rhHalo = makeHalo(3, 0.8, 0x00c805);
+    rhHalo.position.z = -0.02;
+    rhGroup.add(rhHalo);
+    halos.push(rhHalo);
+
+    loader.load(
+      '/logos/robinhood.png',
+      (tex) => {
+        tex.colorSpace = THREE.SRGBColorSpace;
+        const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true });
+        const plane = new THREE.Mesh(new THREE.PlaneGeometry(3, 0.8), mat);
+        rhGroup.add(plane);
+      },
+      undefined,
+      () => {
+        const mat = new THREE.MeshBasicMaterial({ map: makeSignTexture('ROBINHOOD', { bg: '#00c805', fg: '#000000', border: '#000000' }) });
+        const plane = new THREE.Mesh(new THREE.PlaneGeometry(3, 0.8), mat);
+        rhGroup.add(plane);
+      }
+    );
+    scene.add(rhGroup);
+
+    const rhLight = new THREE.PointLight(0x00c805, 1.4, 4);
+    rhLight.position.set(-ROOM_W / 2 + 0.6, 3, -1);
+    scene.add(rhLight);
+    glowLights.push(rhLight);
 
     const supplySignMat = new THREE.MeshBasicMaterial({
-      map: makeSignTexture('4,444 NFTS', { bg: '#c9bfb7', fg: '#000000' }),
+      map: makeSignTexture('4,444 NFTS', { bg: '#eb802f', fg: '#000000', border: '#000000' }),
     });
     const supplySign = new THREE.Mesh(new THREE.PlaneGeometry(3, 0.8), supplySignMat);
     supplySign.position.set(-ROOM_W / 2 + 0.05, 1.8, -1);
     supplySign.rotation.y = Math.PI / 2;
     scene.add(supplySign);
 
-    // Dinding kanan: OpenSea + progress WL
+    const supplyHalo = makeHalo(3, 0.8, 0xeb802f);
+    supplyHalo.position.set(-ROOM_W / 2 + 0.03, 1.8, -1);
+    supplyHalo.rotation.y = Math.PI / 2;
+    scene.add(supplyHalo);
+    halos.push(supplyHalo);
+
+    const amberWallLight = new THREE.PointLight(0xeb802f, 1.2, 4);
+    amberWallLight.position.set(-ROOM_W / 2 + 0.6, 1.8, -1);
+    scene.add(amberWallLight);
+    glowLights.push(amberWallLight);
+
+    // ---------- Dinding kanan: OpenSea + progress WL ----------
+    const osGroup = new THREE.Group();
+    osGroup.position.set(ROOM_W / 2 - 0.05, 3.4, -1);
+    osGroup.rotation.y = -Math.PI / 2;
+
+    const osHalo = makeHalo(2.4, 0.7, 0x2081e2);
+    osHalo.position.z = -0.02;
+    osGroup.add(osHalo);
+    halos.push(osHalo);
+
+    loader.load(
+      '/logos/opensea.png',
+      (tex) => {
+        tex.colorSpace = THREE.SRGBColorSpace;
+        const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true });
+        const plane = new THREE.Mesh(new THREE.PlaneGeometry(2.4, 0.7), mat);
+        osGroup.add(plane);
+      },
+      undefined,
+      () => {
+        const mat = new THREE.MeshBasicMaterial({ map: makeSignTexture('OPENSEA', { bg: '#2081e2', fg: '#ffffff', border: '#ffffff' }) });
+        const plane = new THREE.Mesh(new THREE.PlaneGeometry(2.4, 0.7), mat);
+        osGroup.add(plane);
+      }
+    );
+    scene.add(osGroup);
+
+    const osLight = new THREE.PointLight(0x2081e2, 1.4, 4);
+    osLight.position.set(ROOM_W / 2 - 0.6, 3.4, -1);
+    scene.add(osLight);
+    glowLights.push(osLight);
+
     const progress = makeProgressTexture(0, 1000);
     const progressMat = new THREE.MeshBasicMaterial({ map: progress.tex });
-    const progressSign = new THREE.Mesh(new THREE.PlaneGeometry(3, 1.3), progressMat);
-    progressSign.position.set(ROOM_W / 2 - 0.05, 2.4, -1);
+    const progressSign = new THREE.Mesh(new THREE.PlaneGeometry(2.6, 1.15), progressMat);
+    progressSign.position.set(ROOM_W / 2 - 0.05, 2.1, -1);
     progressSign.rotation.y = -Math.PI / 2;
     scene.add(progressSign);
+
+    const progressHalo = makeHalo(2.6, 1.15, 0x00d4ff);
+    progressHalo.position.set(ROOM_W / 2 - 0.03, 2.1, -1);
+    progressHalo.rotation.y = -Math.PI / 2;
+    scene.add(progressHalo);
+    halos.push(progressHalo);
+
+    const cyanLight = new THREE.PointLight(0x00d4ff, 1.1, 4);
+    cyanLight.position.set(ROOM_W / 2 - 0.6, 2.1, -1);
+    scene.add(cyanLight);
+    glowLights.push(cyanLight);
 
     fetch('/api/whitelist/count')
       .then((res) => res.json())
@@ -167,14 +267,14 @@ export function Lobby3D() {
         const claimed = data.count ?? 0;
         const ctx = progress.ctx;
         const canvas = progress.canvas;
-        ctx.fillStyle = '#6fff00';
+        ctx.fillStyle = '#00d4ff';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = '#000000';
         ctx.fillRect(6, 6, canvas.width - 12, canvas.height - 12);
         ctx.fillStyle = '#ffffff';
         ctx.font = 'bold 30px monospace';
         ctx.textAlign = 'center';
-        ctx.fillText('APPLY WL', canvas.width / 2, 46);
+        ctx.fillText('OPENSEA', canvas.width / 2, 46);
         ctx.font = 'bold 22px monospace';
         ctx.fillStyle = '#eb802f';
         ctx.fillText('WHITELIST PROGRESS', canvas.width / 2, 92);
@@ -192,7 +292,7 @@ export function Lobby3D() {
       })
       .catch(() => {});
 
-    // Counter: navigasi lintas halaman (bukan scroll di halaman yang sama lagi)
+    // ---------- Counters ----------
     const counters: Counter[] = [
       {
         x: -4.5,
@@ -220,7 +320,6 @@ export function Lobby3D() {
       },
     ];
 
-    const loader = new THREE.TextureLoader();
     const clickable: THREE.Object3D[] = [];
     const deskBounds: { x: number; z: number }[] = [];
 
@@ -359,10 +458,20 @@ export function Lobby3D() {
 
     const clock = new THREE.Clock();
     let frameId: number;
+    let elapsed = 0;
 
     function animate() {
       frameId = requestAnimationFrame(animate);
       const delta = Math.min(clock.getDelta(), 0.05);
+      elapsed += delta;
+
+      const pulse = 0.3 + Math.sin(elapsed * 1.6) * 0.08;
+      halos.forEach((h) => {
+        (h.material as THREE.MeshBasicMaterial).opacity = pulse;
+      });
+      glowLights.forEach((l) => {
+        l.intensity = 1.1 + Math.sin(elapsed * 1.6) * 0.3;
+      });
 
       const euler = new THREE.Euler(pitch, yaw, 0, 'YXZ');
       camera.quaternion.setFromEuler(euler);
